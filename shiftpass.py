@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import string
 import sys
 current_arg_pos = 0
@@ -20,7 +21,7 @@ for x in sys.argv:
         tocrypt = sys.argv[current_arg_pos+1]
 
     if (x == "-h" or x == "--help"):
-        print """
+        print("""
         ShiftPass Encryption System by DatOneLefty
 
         help
@@ -33,12 +34,12 @@ for x in sys.argv:
 
         -p [password]   define password to use instead of asking in the script
         -s [string]     define string to use instead of asking in the script
-        """
+        """)
     current_arg_pos = current_arg_pos + 1
 
 
 if asktype == True:
-        ect = raw_input("encrypt or decrypt (e/d): ")
+        ect = input("encrypt or decrypt (e/d): ")
         if (ect == "e"):
             fc = "-e"
         elif (ect == "d"):
@@ -48,23 +49,24 @@ if asktype == True:
 
 
 if askpass == True:
-    password = raw_input("password: ")
+    password = input("password: ")
 
 if askstr == True:
     if (fc == "-e"):
-        tocrypt = raw_input("string to encrypt: ")
+        tocrypt = input("string to encrypt: ")
 
     if (fc == "-d"):
-        tocrypt = raw_input("string to decrypt: ")
+        tocrypt = input("string to decrypt: ")
 
 
-chars = """ 1234567890-=QWERTYUIOP[]\ASDFGHJKL'ZXCVBNM,./qwertyuiopasdfghjklzxcvbnm!@#$%^&*()_+{}|:"<>?'"""
+chars = """ 1234567890-=QWERTYUIOP[]\ASDFGHJKLZXCVBNM,./qwertyuiopasdfghjklzxcvbnm!@#$%^&*()_+{}|:"<>?'"""
+
+eb = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿ"
 
 cplace = -1
 plen = len(password)
 
 crypted = ""
-
 
 
 all_string_pos = []
@@ -77,13 +79,24 @@ for pc in password:
         posc = posc + 1
 
     all_pass_pos.append(shift)
-for tc in tocrypt:
-    posc = 0
-    for p in chars:
-        if p == tc:
-            shift = posc
-        posc = posc + 1
-    all_string_pos.append(shift)
+
+if fc == "-e":
+    for tc in tocrypt:
+        posc = 0
+        for p in chars:
+            if p == tc:
+                shift = posc
+            posc = posc + 1
+            all_string_pos.append(shift)
+
+if fc == "-d":
+    for tc in tocrypt:
+        posc = 0
+        for p in eb:
+            if p == tc:
+                shift = posc
+            posc = posc + 1
+            all_string_pos.append(shift)
 
 
 
@@ -99,22 +112,21 @@ for piece in all_string_pos:
 
     if fc == "-e":
         all_string_pos[pos] = all_string_pos[pos] + all_pass_pos[cplace]
-        if all_string_pos[pos] >= len(chars):
-            goto = all_string_pos[pos] - len(chars)
-            all_string_pos[pos] = goto
 
 
     if fc == "-d":
         all_string_pos[pos] = all_string_pos[pos] - all_pass_pos[cplace]
-        if all_string_pos[pos] >= len(chars):
-            goto = all_string_pos[pos] + len(chars)
-            all_string_pos[pos] = goto
 
-for piece in all_string_pos:
-    crypted = crypted + chars[piece]
+if fc == "-e":
+    for piece in all_string_pos:
+        crypted = crypted + eb[piece]
+
+if fc == "-d":
+    for piece in all_string_pos:
+        crypted = crypted + chars[piece]
 
 if (fc == "-e"):
-    print "Encrypted: " + crypted
+    print("Encrypted: " + crypted)
 
 if (fc == "-d"):
-    print "Decrypted: " + crypted
+    print("Decrypted: " + crypted)
