@@ -39,7 +39,7 @@ for x in sys.argv:
 
 
 if asktype == True:
-        ect = input("encrypt or decrypt (e/d): ")
+        ect = raw_input("encrypt or decrypt (e/d): ")
         if (ect == "e"):
             fc = "-e"
         elif (ect == "d"):
@@ -49,19 +49,15 @@ if asktype == True:
 
 
 if askpass == True:
-    password = input("password: ")
+    password = raw_input("password: ")
 
 if askstr == True:
     if (fc == "-e"):
-        tocrypt = input("string to encrypt: ")
+        tocrypt = raw_input("string to encrypt: ")
 
     if (fc == "-d"):
-        tocrypt = input("string to decrypt: ")
+        tocrypt = raw_input("string to decrypt: ")
 
-
-chars = """ 1234567890-=QWERTYUIOP[]\ASDFGHJKLZXCVBNM,./qwertyuiopasdfghjklzxcvbnm!@#$%^&*()_+{}|:"<>?'"""
-
-eb = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿ"
 
 cplace = -1
 plen = len(password)
@@ -72,31 +68,12 @@ crypted = ""
 all_string_pos = []
 all_pass_pos = []
 for pc in password:
-    posc = 0
-    for p in chars:
-        if p == pc:
-            shift = posc
-        posc = posc + 1
+    all_pass_pos.append(ord(pc))
 
-    all_pass_pos.append(shift)
 
-if fc == "-e":
-    for tc in tocrypt:
-        posc = 0
-        for p in chars:
-            if p == tc:
-                shift = posc
-            posc = posc + 1
-            all_string_pos.append(shift)
+for tc in tocrypt:
+    all_string_pos.append(ord(tc))
 
-if fc == "-d":
-    for tc in tocrypt:
-        posc = 0
-        for p in eb:
-            if p == tc:
-                shift = posc
-            posc = posc + 1
-            all_string_pos.append(shift)
 
 
 
@@ -119,11 +96,11 @@ for piece in all_string_pos:
 
 if fc == "-e":
     for piece in all_string_pos:
-        crypted = crypted + eb[piece]
+        crypted = crypted + chr(piece)
 
 if fc == "-d":
     for piece in all_string_pos:
-        crypted = crypted + chars[piece]
+        crypted = crypted + chr(piece)
 
 if (fc == "-e"):
     print("Encrypted: " + crypted)
