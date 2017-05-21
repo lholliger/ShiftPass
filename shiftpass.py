@@ -1,11 +1,14 @@
-# -*- coding: utf-8 -*-
 import string
 import sys
 current_arg_pos = 0
+import binascii
+
+current_version = "01" # THIS CHANGES WITH EVERY ENCODING UPDATE TO PREVENT ERRORS
 
 askpass = True
 askstr = True
 asktype = True
+force = False
 for x in sys.argv:
     if (x == "-e" or x == "--encrypt"):
         fc = "-e"
@@ -20,6 +23,9 @@ for x in sys.argv:
         askstr = False
         tocrypt = sys.argv[current_arg_pos+1]
 
+    if (x == "-f" or x == "--force"):
+        force = True
+
     if (x == "-h" or x == "--help"):
         print("""
         ShiftPass Encryption System by DatOneLefty
@@ -31,6 +37,7 @@ for x in sys.argv:
 
         -e:              encrypt string
         -d:              decrypt string
+        -f:              force decoding an older version
 
         -p [password]   define password to use instead of asking in the script
         -s [string]     define string to use instead of asking in the script
@@ -39,7 +46,7 @@ for x in sys.argv:
 
 
 if asktype == True:
-        ect = raw_input("encrypt or decrypt (e/d): ")
+        ect = input("encrypt or decrypt (e/d): ")
         if (ect == "e"):
             fc = "-e"
         elif (ect == "d"):
@@ -49,14 +56,24 @@ if asktype == True:
 
 
 if askpass == True:
-    password = raw_input("password: ")
+    password = input("password: ")
 
 if askstr == True:
     if (fc == "-e"):
-        tocrypt = raw_input("string to encrypt: ")
+        tocrypt = input("string to encrypt: ")
 
     if (fc == "-d"):
-        tocrypt = raw_input("string to decrypt: ")
+        tocrypt = input("string to decrypt: ")
+
+if (fc == "-d"):
+    enc1 = tocrypt;
+    tocrypt = enc1.split("=")[1]
+    version = enc1.split("=")[0]
+    tocrypt = binascii.unhexlify(tocrypt).decode('utf8')
+
+    if (force == False):
+        if (version != current_version):
+            sys.exit("Fatal Error: the string to decrypt was encrypted using an old version and will not work! add -f to the command to force decoding");
 
 
 cplace = -1
@@ -88,11 +105,9 @@ for piece in all_string_pos:
         cplace = 0
 
     if fc == "-e":
-        all_string_pos[pos] = all_string_pos[pos] + all_pass_pos[cplace]
-
-
+        all_string_pos[pos] = (all_string_pos[pos] + all_pass_pos[cplace]) % 255
     if fc == "-d":
-        all_string_pos[pos] = all_string_pos[pos] - all_pass_pos[cplace]
+        all_string_pos[pos] = (all_string_pos[pos] - all_pass_pos[cplace]) % 255
 
 if fc == "-e":
     for piece in all_string_pos:
@@ -103,7 +118,7 @@ if fc == "-d":
         crypted = crypted + chr(piece)
 
 if (fc == "-e"):
-    print("Encrypted: " + crypted)
+    print("01=" + binascii.hexlify(crypted.encode('utf8')).decode("utf-8"))
 
 if (fc == "-d"):
-    print("Decrypted: " + crypted)
+    print(crypted)
